@@ -53,7 +53,11 @@ function calculatePasswordStrength(password) {
   weaknesses.push(specialCharactersWeakness(password));
   weaknesses.push(repeatCharactersWeakness(password));
 
-  return weaknesses;
+  if (weaknesses.length <= 0) {
+    return weakness.push("Input password");
+  } else {
+    return weaknesses;
+  }
 }
 
 // function scoreCheck(password) {
