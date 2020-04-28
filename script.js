@@ -1,15 +1,21 @@
 const strengthMeter = document.getElementById("strength-meter");
 const passwordInput = document.getElementById("password-input");
-const reasonContainer = document.getElementById("reasons");
+const reasonsContainer = document.getElementById("reasons");
 
 passwordInput.addEventListener("input", updateStrengthMeter);
+updateStrengthMeter();
 
 function updateStrengthMeter() {
   const weaknesses = calculatePasswordStrength(passwordInput.value);
 
   let strength = 100;
+  reasonsContainer.innerHTML = "";
   weaknesses.forEach((weakness) => {
+    if (weakness == null) return;
     strength -= weakness.deduction;
+    const messageElement = document.createElement("div");
+    messageElement.innerText = weakness.message;
+    reasonsContainer.appendChild(messageElement);
   });
   strengthMeter.style.setProperty("--strength", strength);
 }
@@ -17,7 +23,9 @@ function updateStrengthMeter() {
 function calculatePasswordStrength(password) {
   const weaknesses = [];
   weaknesses.push(lengthWeakness(password));
-
+  weaknesses.push(lowercaseWeakness(password));
+  weaknesses.push(uppercaseWeakness(password));
+  weaknesses.push(numbersWeakness(password));
   return weaknesses;
 }
 
@@ -37,4 +45,34 @@ function lengthWeakness(password) {
       deduction: 15,
     };
   }
+}
+
+function uppercaseWeakness(password) {
+  return characterTypeWeakeness(password, /[A-Z]/g, "uppercase characters");
+}
+
+function lowercaseWeakness(password) {
+  return characterTypeWeakeness(password, /[a-z]/g, "lowercase characters");
+}
+
+function characterTypeWeakeness(password, regex, type) {
+  const matches = password.match(regex) || [];
+
+  if (matches.length === 0) {
+    return {
+      message: `Your password has no ${type}`,
+      deduction: 20,
+    };
+  }
+
+  if (matches.length <= 2) {
+    return {
+      message: `Your password could use more ${type}`,
+      deduction: 5,
+    };
+  }
+}
+
+function numbersWeakness(password) {
+  return characterTypeWeakeness(password, /[0-9]/g, "numbers");
 }
