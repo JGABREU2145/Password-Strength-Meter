@@ -20,28 +20,20 @@ function updateStrengthMeter() {
     reasonsContainer.appendChild(messageElement);
   });
   strengthMeter.style.setProperty("--strength", strength);
+  strengthMeter.style.setProperty("--hue", strength);
 
   if (strength < 0) {
     strength = 0;
   }
-
   strengthPercentage(strength);
 }
 
 function strengthPercentage(strength) {
   strengthTotal.innerHTML = "";
-  const arr = [];
+
   const strengthElement = document.createElement("h2");
-  strengthElement.innerText = strength;
-  arr.push(strengthTotal.appendChild(strengthElement));
-
-  const strengthTest = () => {
-    if (arr.length >= 1) {
-      arr.shift();
-    }
-  };
-
-  return strengthTest();
+  strengthElement.innerText = `Your password is ${strength}% effective`;
+  strengthTotal.appendChild(strengthElement);
 }
 
 function calculatePasswordStrength(password) {
@@ -53,16 +45,12 @@ function calculatePasswordStrength(password) {
   weaknesses.push(specialCharactersWeakness(password));
   weaknesses.push(repeatCharactersWeakness(password));
 
-  if (weaknesses.length <= 0) {
-    return weakness.push("Input password");
+  if (weaknesses.length <= 2) {
+    weaknesses.push("Input password");
   } else {
     return weaknesses;
   }
 }
-
-// function scoreCheck(password) {
-//     if ()
-// }
 
 function lengthWeakness(password) {
   const length = password.length;
